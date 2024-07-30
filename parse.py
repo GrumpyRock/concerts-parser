@@ -1,4 +1,5 @@
 import re
+import json
 from bs4 import BeautifulSoup
 
 with open("index.html") as fp:
@@ -20,11 +21,16 @@ for raw_concert in concert_list:
 
     concert['artists'] = []
 
-    raw_html = raw_concert.select('td:last-child')[0]
-    artists_html = raw_html.select('div.col')
-    for sub_html in artists_html:
-        concert['artists'].append({ 'name': sub_html.b.text, 'genres': re.split("/|,|\\|", sub_html.i.text) })
+    last_child = raw_concert.select('td:last-child')
 
     concerts.append(concert)
 
-print(concerts)
+html_concert_list = soup.css.select('tbody tr td:last-child')
+
+# A faire : vérifier que les éléments des deux listes correspondent
+for index, raw_html_concert in enumerate(html_concert_list):
+    artists_html = raw_html_concert.select('div.col')
+    for sub_html in artists_html:
+        concerts[index]['artists'].append({ 'name': sub_html.b.text, 'genres': re.split("/|,|\\|", sub_html.i.text) })
+
+print(json.dumps(concerts))
