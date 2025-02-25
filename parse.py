@@ -12,7 +12,7 @@ concerts = []
 
 for raw_concert in concert_list:
     concert = {}
-    concert['location_name'] = raw_concert.select('[itemprop="location"] [itemprop="name"]')[0]['content']
+    concert['location_name'] = raw_concert.select('[itemprop="location"] [itemprop="name"]')[0]['content'].replace("\\\\", "\\")
     concert['location_locality'] = raw_concert.select('[itemprop="location"] [itemprop="address"] [itemprop="addressLocality"]')[0]['content']
     concert['location_country'] = raw_concert.select('[itemprop="location"] [itemprop="address"] [itemprop="addressCountry"]')[0]['content']
     concert['name'] = raw_concert.select('[itemprop="name"]')[1]['content']
@@ -33,4 +33,4 @@ for index, raw_html_concert in enumerate(html_concert_list):
     for sub_html in artists_html:
         concerts[index]['artists'].append({ 'name': sub_html.b.text, 'genres': re.split("/|,|\\|", sub_html.i.text) })
 
-print(json.dumps(concerts))
+print(json.dumps(concerts, ensure_ascii=False))
