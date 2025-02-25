@@ -2,6 +2,36 @@ import re
 import json
 from bs4 import BeautifulSoup
 
+banned_locations = [
+    # Villes trop loin de Paris
+    "Chelles",
+    "Savigny",
+    "Montreuil",
+    "Montévrain",
+    "Vauréal",
+    "Vaureal",
+    "Ecquevilly",
+    "Magny",
+    "Issy",
+    "Cergy",
+    "Vitry",
+    "Mennecy",
+    "Écouen",
+    "Eragny",
+    "Saint-Germain-En-Laye",
+    "Massy",
+    "Saint-Ouen",
+    "Argenteuil",
+    "Ris-Orangis",
+    "Thorigny",
+    "La Ferté",
+    "Le Mée",
+
+    # Trop petites salles
+    "La Mécanique Ondulatoire",
+    "Le Klub",
+]
+
 with open("index.html") as fp:
     soup = BeautifulSoup(fp, 'html.parser')
 
@@ -9,6 +39,7 @@ with open("index.html") as fp:
 concert_list = soup.css.select('[itemtype="https://schema.org/MusicEvent"]')
 
 concerts = []
+concerts_to_skip = []
 
 for id_concert, raw_concert in enumerate(concert_list):
     concert = {}
@@ -37,4 +68,12 @@ for index, raw_html_concert in enumerate(html_concert_list):
         concerts[index]['title'] += " + " if concerts[index]['title'] else " "
         concerts[index]['title'] += sub_html.b.text
 
-print(json.dumps(concerts, ensure_ascii=False))
+final_concerts = []
+
+for concert in concerts:
+    if any((substring.lower() in concert['location_name'].lower()) for substring in banned_locations) or \
+    any(substring.lower() in concert['location_locality'].lower() for substring in banned_locations):
+        continue
+    final_concerts.append(concert)
+
+print(json.dumps(final_concerts, ensure_ascii=False))
