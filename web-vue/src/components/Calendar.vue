@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ScheduleXCalendar } from '@schedule-x/vue'
 import { createEventModalPlugin } from '@schedule-x/event-modal'
 import {
