@@ -30,6 +30,8 @@ banned_locations = [
     # Trop petites salles
     "La Mécanique Ondulatoire",
     "Le Klub",
+    "Le Hasard Ludique",
+    "Supersonic",
 ]
 
 with open("index.html") as fp:
@@ -65,8 +67,14 @@ for index, raw_html_concert in enumerate(html_concert_list):
     concerts[index]['title'] = ""
     for sub_html in artists_html:
         concerts[index]['artists'].append({ 'name': sub_html.b.text, 'genres': re.split("/|,|\\|", sub_html.i.text) })
-        concerts[index]['title'] += " + " if concerts[index]['title'] else " "
-        concerts[index]['title'] += sub_html.b.text
+        # concerts[index]['title'] += " + " if concerts[index]['title'] else " "
+        # concerts[index]['title'] += sub_html.b.text
+
+        # Data pour le côté front
+        concerts[index]['title'] = concerts[index]['name']
+        concerts[index]['location'] = concerts[index]['location_name']
+        concerts[index]['people'] = [artist['name'] for artist in concerts[index]['artists']]
+        # concerts[index]['description'] = concerts[index]['name']
 
 final_concerts = []
 
